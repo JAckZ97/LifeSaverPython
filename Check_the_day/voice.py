@@ -3,8 +3,6 @@ import time
 import speech_recognition as sr
 from gtts import gTTS
 import playsound
-# TODO: missing pyaudio module
-# https://medium.com/@wagnernoise/installing-pyaudio-on-macos-9a5557176c4d
 
 
 def talk(text):
@@ -16,18 +14,25 @@ def talk(text):
 
 def get_audio():
     r = sr.Recognizer()
-    with sr.Microphone() as source:
+    mic = sr.Microphone(device_index=0)
+
+    with mic as source:
+        r.adjust_for_ambient_noise(source)
+        print("listening...")
+
         audio = r.listen(source)
-        said = ""
+        saying = ""
 
         try:
-            said = r.recognize_google(audio)
-            print(said)
+            saying = r.recognize_google(audio)
+            print(saying)
+
         except Exception as e:
             print("Exception: " + str(e))
 
-    return said
+    return saying
 
 
 talk("hello")
 get_audio()
+
